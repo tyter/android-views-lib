@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="background">#F2F2F2</color>
+
+    <color name="white">#FFFFFFFF</color>
+    <color name="blue">#0088FF</color>
+    <color name="black">#ff000000</color>
+    <color name="gray">#ff232323</color>
+    <color name="text_black">#333333</color>
+    <color name="text_red">#FF5F4A</color>
+    <color name="text_gray">#999999</color>
+    <color name="text_green">#FF5ABB3C</color>
+    <color name="five_percent_black">#0d000000</color>
+    <color name="sixty_percent_white">#99ffffff</color>
+
+    <color name="dialog_text_grey">#666666</color>
+    <color name="line_gray">#E5E5E5</color>
+    <color name="btn_disable">#82C4FD</color>
+    <color name="btn_press">#1E86EB</color>
+
+    <color name="record_orange">#FFFF9801</color>
+    <color name="record_gray_background">#FFEEEEEE</color>
+    <color name="record_dark_background">#FFDDDDDD</color>
+    <color name="record_column_gray_background">#FFF9F9F9</color>
+    <color name="record_blue_background">#FF279AFF</color>
+    <color name="record_separator">#FFDDDDDD</color>
+
+    <color name="dialog_spilt">#f7f7f7</color>
+</resources>

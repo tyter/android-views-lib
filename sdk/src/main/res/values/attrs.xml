@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PickerView">
+        <attr name="lineHeight" format="dimension" />
+        <attr name="highlightTextSize" format="dimension" />
+        <attr name="textSize" format="dimension" />
+        <attr name="highlightTextColor" format="color" />
+        <attr name="textColor" format="color" />
+        <attr name="dividerDisplay" format="enum">
+            <enum name="hide" value="0" />
+            <enum name="simple" value="1" />
+            <enum name="full" value="2" />
+        </attr>
+        <attr name="dividerWidth"  format="float" />
+        <attr name="dividerColor" format="color" />
+        <attr name="loop" format="boolean" />
+    </declare-styleable>
+</resources>

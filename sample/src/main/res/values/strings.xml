@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Sample</string>
+
+    <string name="str_dialog_cancel">取消</string>
+    <string name="str_dialog_back_now_month">回到本月</string>
+    <string name="str_dialog_confirm">确定</string>
+</resources>
