@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">sdk</string>
+
+    <string name="picture">图片</string>
+    <string name="video">视频</string>
+    <string name="audio">音频</string>
+    <string name="other">其他</string>
+
+    <string name="upload">上传(0)</string>
+    <string name="select_all">全选</string>
+    <string name="title">选择文件</string>
 </resources>
