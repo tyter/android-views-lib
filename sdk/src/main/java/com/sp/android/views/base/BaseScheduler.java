@@ -7,4 +7,6 @@ public interface BaseScheduler {
 
     void runOnIOThread(Runnable runnable);
 
+    void runOnQueueThread(int queue, Runnable runnable);
+
 }
