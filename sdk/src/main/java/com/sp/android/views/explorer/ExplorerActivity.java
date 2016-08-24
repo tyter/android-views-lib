@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sp.android.views.R;
 import com.sp.android.views.explorer.fragment.BaseFragment;
@@ -20,8 +21,8 @@ import com.sp.android.views.scheduler.ThreadPoolScheduler;
 
 import java.util.List;
 
-public class ExplorerActivity extends Activity implements DrawerLayout.DrawerListener,
-        MenuAdapter.Callback, ExplorerContract.View, BaseFragment.Callback {
+public class ExplorerActivity extends Activity implements MenuAdapter.Callback,
+        ExplorerContract.View, BaseFragment.Callback {
 
     private ImageView mBtnBack;
     private TextView mTextTitle;
@@ -54,7 +55,6 @@ public class ExplorerActivity extends Activity implements DrawerLayout.DrawerLis
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mDrawerLayoutMain.removeDrawerListener(this);
     }
 
     @Override
@@ -70,6 +70,11 @@ public class ExplorerActivity extends Activity implements DrawerLayout.DrawerLis
         mPresenter.stop();
     }
 
+    @Override
+    public void onBackPressed() {
+        onBack();
+    }
+
     private void initTitle() {
         mBtnBack = (ImageView) findViewById(R.id.img_title_bar_back);
         mTextTitle = (TextView) findViewById(R.id.txt_title_bar_title);
@@ -78,10 +83,11 @@ public class ExplorerActivity extends Activity implements DrawerLayout.DrawerLis
         mBtnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                onBack();
             }
         });
         mTextMenu.setVisibility(View.INVISIBLE);
+        mTextTitle.setVisibility(View.VISIBLE);
     }
 
     private void initMenu() {
@@ -91,7 +97,6 @@ public class ExplorerActivity extends Activity implements DrawerLayout.DrawerLis
     }
 
     private void initDrawer() {
-        mDrawerLayoutMain.addDrawerListener(this);
         mDrawerLayoutMain.openDrawer(GravityCompat.START);
     }
 
@@ -114,24 +119,10 @@ public class ExplorerActivity extends Activity implements DrawerLayout.DrawerLis
                 Injection.provideMediaTask(this));
     }
 
-    @Override
-    public void onDrawerSlide(View drawerView, float slideOffset) {
-
-    }
-
-    @Override
-    public void onDrawerOpened(View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerClosed(View drawerView) {
-
-    }
-
-    @Override
-    public void onDrawerStateChanged(int newState) {
-
+    private void onBack() {
+        if (mFileListFragment.onBack()) {
+            finish();
+        }
     }
 
     @Override
@@ -150,21 +141,16 @@ public class ExplorerActivity extends Activity implements DrawerLayout.DrawerLis
     }
 
     @Override
-    public void onMediaMetaChanged(int type, MediaMeta meta) {
-
-    }
-
-    @Override
-    public void onMediaMetaChanged(int type, List<MediaMeta> meta) {
+    public void onLoadStart(int type) {
         if (type == MediaMeta.MEDIA_TYPE_PICTURE) {
-            mPictureFragment.setMedia(meta);
+            mPictureFragment.clearMedia();
             FragmentManager manager = this.getFragmentManager();
             manager.beginTransaction()
                     .show(mPictureFragment)
                     .hide(mFileListFragment)
                     .commit();
         } else {
-            mFileListFragment.setMedia(meta);
+            mFileListFragment.clearMedia();
             FragmentManager manager = this.getFragmentManager();
             manager.beginTransaction()
                     .show(mFileListFragment)
@@ -174,13 +160,22 @@ public class ExplorerActivity extends Activity implements DrawerLayout.DrawerLis
     }
 
     @Override
-    public void onMediaMetaNotAvailable(int type) {
+    public void onLoad(int type, List<MediaMeta> meta) {
+        if (type == MediaMeta.MEDIA_TYPE_PICTURE) {
+            mPictureFragment.addMedia(meta);
+        } else {
+            mFileListFragment.addMedia(meta);
+        }
+    }
 
+    @Override
+    public void onLoadEnd(int type) {
     }
 
     @Override
     public void onError(int code, String msg) {
-
+        String showMsg = String.format("%s, code is %d", msg, code);
+        Toast.makeText(this, showMsg, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -22,9 +22,9 @@ import com.sp.android.views.explorer.model.bean.MediaMeta;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 
 public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHolder> {
 
@@ -52,6 +52,12 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         mGroupByDate = false;
     }
 
+    public void clearMediaMeta() {
+        mMediaMeta.clear();
+        mSelected.clear();
+        notifyDataSetChanged();
+    }
+
     public void addMediaMeta(List<MediaMeta> mediaMeta) {
         if (mediaMeta != null) {
             processMediaMeta(mediaMeta);
@@ -64,6 +70,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
             mMediaMeta.clear();
             mSelected.clear();
             processMediaMeta(mediaMeta);
+            notifyDataSetChanged();
         }
     }
 
@@ -113,7 +120,7 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
                             .setOldController(holder.imgPicture.getController())
                             .build();
             holder.imgPicture.setController(draweeController);
-            if (mSelected.contains(data.getId())) {
+            if (mSelected.contains(data)) {
                 holder.imgSelect.setImageDrawable(mContext.getResources().getDrawable(R.drawable.chk_checked));
             } else {
                 holder.imgSelect.setImageDrawable(mContext.getResources().getDrawable(R.drawable.chk_unchecked));
@@ -151,34 +158,54 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
     }
 
     private void processMediaMeta(List<MediaMeta> mediaMeta) {
-        Collections.sort(mediaMeta);
         if (mGroupByDate) {
-            MediaMeta date = null;
-            long timeBegin = 0;
-            long timeEnd = 0;
             for (MediaMeta meta : mediaMeta) {
                 if (meta.getType() == MediaMeta.MEDIA_TYPE_NULL) {
                     continue;
                 }
-                if (date == null) {
-                    date = new MediaMeta();
+
+                if (!isDateExist(meta.getTime())) {
+                    long begin = getTimePointSecond(meta.getTime(), true);
+                    long end = getTimePointSecond(meta.getTime(), false);
+
+                    DateMediaMeta date = new DateMediaMeta();
+                    date.setType(MediaMeta.MEDIA_TYPE_NULL);
                     date.setTime(meta.getTime());
-                    timeBegin = getTimePointSecond(meta.getTime(), true);
-                    timeEnd = getTimePointSecond(meta.getTime(), false);
+                    date.setBeginTime(begin);
+                    date.setEndTime(end);
+
                     mMediaMeta.add(date);
                 }
-                if (meta.getTime() < timeBegin || meta.getTime() > timeEnd) {
-                    date = new MediaMeta();
-                    date.setTime(meta.getTime());
-                    timeBegin = getTimePointSecond(meta.getTime(), true);
-                    timeEnd = getTimePointSecond(meta.getTime(), false);
-                    mMediaMeta.add(date);
-                }
+
                 mMediaMeta.add(meta);
             }
         } else {
             mMediaMeta.addAll(mediaMeta);
         }
+    }
+
+    private boolean isDateExist(long time) {
+        boolean exist = false;
+        int size = mMediaMeta.size();
+        if (size == 0) {
+            return false;
+        }
+        ListIterator<MediaMeta> iterator = mMediaMeta.listIterator(size);
+        while (iterator.hasPrevious()) {
+            MediaMeta meta = iterator.previous();
+            if (meta.getType() != MediaMeta.MEDIA_TYPE_NULL) {
+                continue;
+            }
+
+            DateMediaMeta dateMeta = (DateMediaMeta)meta;
+            long begin = dateMeta.getBeginTime();
+            long end = dateMeta.getEndTime();
+            if (time >= begin && time <= end) {
+                exist = true;
+            }
+            break;
+        }
+        return exist;
     }
 
     private long getTimePointSecond(long time, boolean start) {
@@ -215,7 +242,8 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-        return String.format("%04d年%d月%d日", year, month, day);
+        String format = mContext.getResources().getText(R.string.time_format).toString();
+        return String.format(format, year, month, day);
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -252,6 +280,33 @@ public class PictureAdapter extends RecyclerView.Adapter<PictureAdapter.ViewHold
                 mPictureFragment.updateSelectedCount(mSelected.size());
                 notifyItemChanged(position);
             }
+        }
+    }
+
+    class DateMediaMeta extends MediaMeta {
+        private long mBeginTime;
+        private long mEndTime;
+
+        DateMediaMeta() {
+            super();
+            this.mBeginTime = 0L;
+            this.mEndTime = 0L;
+        }
+
+        public long getBeginTime() {
+            return mBeginTime;
+        }
+
+        public void setBeginTime(long beginTime) {
+            mBeginTime = beginTime;
+        }
+
+        public long getEndTime() {
+            return mEndTime;
+        }
+
+        public void setEndTime(long endTime) {
+            mEndTime = endTime;
         }
     }
 }

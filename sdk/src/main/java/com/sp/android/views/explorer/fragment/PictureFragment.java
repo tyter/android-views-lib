@@ -1,6 +1,7 @@
 package com.sp.android.views.explorer.fragment;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ public class PictureFragment extends BaseFragment implements View.OnClickListene
 
         mPictureView = (RecyclerView) view.findViewById(R.id.list_pictures);
         mAdapter = new PictureAdapter(getActivity(), this);
+        mAdapter.setGroupByDate(true);
         mPictureView.setAdapter(mAdapter);
         mPictureView.setLayoutManager(mAdapter.getLayoutManger());
 
@@ -47,21 +49,30 @@ public class PictureFragment extends BaseFragment implements View.OnClickListene
         return view;
     }
 
-    public void setMedia(List<MediaMeta> data) {
-        if (mAdapter != null) {
-            mAdapter.setMediaMeta(data);
+    public void clearMedia() {
+        mAdapter.clearMediaMeta();
+        Context context = getActivity();
+        if (context != null) {
+            String text = getActivity().getResources().getText(R.string.upload).toString();
+            mSelectedCount.setText(text);
         }
+    }
+
+    public void setMedia(List<MediaMeta> data) {
+        mAdapter.setMediaMeta(data);
     }
 
     public void addMedia(List<MediaMeta> data) {
-        if (mAdapter != null) {
-            mAdapter.addMediaMeta(data);
-        }
+        mAdapter.addMediaMeta(data);
     }
 
     public void updateSelectedCount(int count) {
-        String text = String.format("上传(%d)", count);
-        mSelectedCount.setText(text);
+        Context context = getActivity();
+        if (context != null) {
+            String text = getActivity().getResources().getText(R.string.upload_count).toString();
+            String show = String.format(text, count);
+            mSelectedCount.setText(show);
+        }
     }
 
     @Override
@@ -69,9 +80,7 @@ public class PictureFragment extends BaseFragment implements View.OnClickListene
         if (v.getId() == R.id.txt_selected_count) {
             if (mCallback != null) {
                 List<MediaMeta> paths = mAdapter.getSelected();
-                if (paths.size() > 0) {
-                    mCallback.onSelected(paths);
-                }
+                mCallback.onSelected(paths);
             }
         }
     }

@@ -18,11 +18,11 @@ public class ExplorerContract {
 
     public interface View extends BaseView<Presenter> {
 
-        void onMediaMetaChanged(int type, MediaMeta meta);
+        void onLoadStart(int type);
 
-        void onMediaMetaChanged(int type, List<MediaMeta> meta);
+        void onLoad(int type, List<MediaMeta> meta);
 
-        void onMediaMetaNotAvailable(int type);
+        void onLoadEnd(int type);
 
         void onError(int code, String msg);
 

@@ -37,8 +37,12 @@ public class ExplorerPresenter implements ExplorerContract.Presenter, ErrorEmitt
         mScheduler.runOnIOThread(new Runnable() {
             @Override
             public void run() {
+                onLoadStart(MediaMeta.MEDIA_TYPE_OTHER);
+
                 List<MediaMeta> data = mMediaTask.queryExternal(path);
-                onMediaMetaChanged(MediaMeta.MEDIA_TYPE_OTHER, data);
+                onLoad(MediaMeta.MEDIA_TYPE_OTHER, data);
+
+                onLoadEnd(MediaMeta.MEDIA_TYPE_OTHER);
             }
         });
     }
@@ -49,17 +53,17 @@ public class ExplorerPresenter implements ExplorerContract.Presenter, ErrorEmitt
             @Override
             public void run() {
                 int offset = 0;
-                List<MediaMeta> list = new LinkedList<>();
                 List<MediaMeta> data;
+                onLoadStart(type);
                 do {
                     data = mMediaTask.query(type, offset, MediaTask.QUERY_COUNT);
                     if (data == null) {
                         break;
                     }
-                    list.addAll(data);
-                    offset += MediaTask.QUERY_COUNT;
+                    onLoad(type, data);
+                    offset += data.size();
                 } while (data.size() == MediaTask.QUERY_COUNT);
-                onMediaMetaChanged(type, list);
+                onLoadEnd(type);
             }
         });
     }
@@ -77,17 +81,37 @@ public class ExplorerPresenter implements ExplorerContract.Presenter, ErrorEmitt
         });
     }
 
-    private void onMediaMetaChanged(final int type, final List<MediaMeta> data) {
+    private void onLoadStart(final int type) {
         mScheduler.runOnUIThread(new Runnable() {
             @Override
             public void run() {
                 ExplorerContract.View view = mView.get();
                 if (view != null) {
-                    if (data == null || data.size() == 0) {
-                        view.onMediaMetaNotAvailable(type);
-                    } else {
-                        view.onMediaMetaChanged(type, data);
-                    }
+                    view.onLoadStart(type);
+                }
+            }
+        });
+    }
+
+    private void onLoad(final int type, final List<MediaMeta> mediaMetas) {
+        mScheduler.runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                ExplorerContract.View view = mView.get();
+                if (view != null) {
+                    view.onLoad(type, mediaMetas);
+                }
+            }
+        });
+    }
+
+    private void onLoadEnd(final int type) {
+        mScheduler.runOnUIThread(new Runnable() {
+            @Override
+            public void run() {
+                ExplorerContract.View view = mView.get();
+                if (view != null) {
+                    view.onLoadEnd(type);
                 }
             }
         });

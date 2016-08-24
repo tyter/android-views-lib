@@ -16,17 +16,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sp.android.views.R;
+import com.sp.android.views.explorer.model.bean.MediaMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 class MenuAdapter extends BaseAdapter implements ListView.OnItemClickListener {
-
-    static final int MENU_TYPE_PICTURE = 0;
-    static final int MENU_TYPE_VIDEO = 1;
-    static final int MENU_TYPE_AUDIO = 2;
-    static final int MENU_TYPE_OTHER = 3;
 
     static final class MenuItem {
         int type;
@@ -123,10 +119,10 @@ class MenuAdapter extends BaseAdapter implements ListView.OnItemClickListener {
 
     private void prepareMenu() {
         mMenus = new ArrayList<>();
-        mMenus.add(new MenuItem(MENU_TYPE_PICTURE, R.string.picture, R.drawable.icon_type_pic, true));
-        mMenus.add(new MenuItem(MENU_TYPE_VIDEO, R.string.video, R.drawable.icon_type_video, false));
-        mMenus.add(new MenuItem(MENU_TYPE_AUDIO, R.string.audio, R.drawable.icon_type_audio, false));
-        mMenus.add(new MenuItem(MENU_TYPE_OTHER, R.string.other, R.drawable.icon_type_other, false));
+        mMenus.add(new MenuItem(MediaMeta.MEDIA_TYPE_PICTURE, R.string.picture, R.drawable.icon_type_pic, true));
+        mMenus.add(new MenuItem(MediaMeta.MEDIA_TYPE_VIDEO, R.string.video, R.drawable.icon_type_video, false));
+        mMenus.add(new MenuItem(MediaMeta.MEDIA_TYPE_AUDIO, R.string.audio, R.drawable.icon_type_audio, false));
+        mMenus.add(new MenuItem(MediaMeta.MEDIA_TYPE_OTHER, R.string.other, R.drawable.icon_type_other, false));
     }
 
     private void setSelected(int position) {

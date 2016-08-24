@@ -37,6 +37,12 @@ public class FileListAdapter extends BaseAdapter implements ListView.OnItemClick
         mSelected = new ArrayList<>();
     }
 
+    public void clearMediaMeta() {
+        mMediaMeta.clear();
+        mSelected.clear();
+        notifyDataSetChanged();
+    }
+
     public void addMediaMeta(List<MediaMeta> mediaMeta) {
         if (mediaMeta != null) {
             mMediaMeta.addAll(mediaMeta);
@@ -46,8 +52,9 @@ public class FileListAdapter extends BaseAdapter implements ListView.OnItemClick
 
     public void setMediaMeta(List<MediaMeta> mediaMeta) {
         if (mediaMeta != null) {
-            mMediaMeta = mediaMeta;
+            mMediaMeta.clear();
             mSelected.clear();
+            mMediaMeta.addAll(mediaMeta);
             notifyDataSetChanged();
         }
     }
@@ -130,7 +137,7 @@ public class FileListAdapter extends BaseAdapter implements ListView.OnItemClick
             holder.size.setText(String.valueOf(meta.getSize()));
             holder.size.setVisibility(View.VISIBLE);
             holder.select.setVisibility(View.VISIBLE);
-            if (mSelected.contains(meta.getId())) {
+            if (mSelected.contains(meta)) {
                 holder.select.setImageDrawable(mContext.getResources().getDrawable(R.drawable.chk_checked));
             } else {
                 holder.select.setImageDrawable(mContext.getResources().getDrawable(R.drawable.chk_unchecked));
